@@ -303,6 +303,17 @@ DEF_TYPE_CHART = {
     }
 }
 
+ABILITY_IMMUNITIES = {
+    "Well-baked body": "Fire",
+    "Flash fire": "Fire",
+    "Volt absorb": "Electric",
+    "Lightning rod": "Electric",
+    "Motor drive": "Electric",
+    "Water absorb": "Water",
+    "Storm drain": "Water",
+    "Levitate": "Ground"
+}
+
 damageMultiplier = 1
 defendingMonTypes = []
 
@@ -330,23 +341,34 @@ while valid_DefendingSecondaryType == False:
         defendingMonTypes.append(defendingSecondaryType)
     elif defendingSecondaryType == "N":
         valid_DefendingSecondaryType = True
-    
+        defendingSecondaryType = None
+
+
+valid_DefendingAbility = False
+while valid_DefendingAbility == False:
+    defendingAbility = input("Enter the ability of the Defending Pokemon, if it exists. Else type 'N':   ")
+    defendingAbility = defendingAbility.capitalize()
+    if defendingAbility in ABILITY_IMMUNITIES.keys():
+        valid_DefendingAbility = True
+    elif defendingAbility == "N":
+        valid_DefendingAbility = True
+        defendingAbility = None
+
 for pokemon_type in defendingMonTypes:
-    # Get the defensive profile for the current type
     type_profile = DEF_TYPE_CHART[pokemon_type]
     
-    # 1. Check if the type is Weak To the attacking move
     if type_profile["Weak To"] is not None and attackingMoveType in type_profile["Weak To"]:
         damageMultiplier *= 2
         
-    # 2. Check if the type is Resistant To the attacking move
     elif type_profile["Resistant To"] is not None and attackingMoveType in type_profile["Resistant To"]:
         damageMultiplier *= 0.5
         
-    # 3. Check if the type is Immune To the attacking move
     elif type_profile["Immune To"] is not None and attackingMoveType in type_profile["Immune To"]:
         damageMultiplier *= 0
 
-# Print the final result to the user
+if defendingAbility is not None:
+    if ABILITY_IMMUNITIES[defendingAbility] == attackingMoveType:
+        damageMultiplier *= 0
+
 print(f"\nThe move is {damageMultiplier}x effective against the defending Pokemon.")
 input()
